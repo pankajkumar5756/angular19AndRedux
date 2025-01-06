@@ -1,0 +1,9 @@
+.mdc-card{
+    margin: 2%;
+}
+table {
+    width: 100%;
+  }
+.mat-mdc-card-content{
+    margin-top: 20px;
+}  

@@ -1,0 +1,32 @@
+{
+  "employee": [
+    {
+      "id": "1",
+      "name": "Pankaj singh",
+      "dateOfJoining": "02-Feb-2022",
+      "role": "Team Lead",
+      "salary": "1200000"
+    },
+    {
+      "id": "2",
+      "name": "Rajnish Singh",
+      "dateOfJoining": "2024-12-31T18:30:00.000Z",
+      "role": "Software Developer",
+      "salary": "903900000"
+    },
+    {
+      "id": "3",
+      "name": "sanam re",
+      "dateOfJoining": "06-Mar-2019",
+      "role": "Admin",
+      "salary": "4520000"
+    },
+    {
+      "id": "4",
+      "name": "Rekha ",
+      "dateOfJoining": "09-Oct-2024",
+      "role": "Team Lead",
+      "salary": "2560000"
+    }
+  ]
+}
