@@ -13,6 +13,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { Employee } from '../../model/employee';
 import { EmployeeService } from '../../service/employee.service';
 import { ToastrService } from 'ngx-toastr';
+import { Store } from '@ngrx/store';
+import { addEmployee, getEmployee, updateEmployee } from '../../store/Employee.Action';
+import { selectEmployee } from '../../store/Employee.Selector';
 
 
 @Component({
@@ -24,6 +27,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class AddEmployeeComponent implements OnInit {
   form: FormGroup;
+
+  _data!: Employee[];
 
   title = 'Add Employee';
   dialogeData: any;
@@ -38,8 +43,13 @@ export class AddEmployeeComponent implements OnInit {
     { id: 5, roleName: 'Software Tester' },
   ];
 
+  /*  constructor(private fb: FormBuilder, private dialog: MatDialog, private datePipe: DatePipe,
+     private service: EmployeeService, private ref: MatDialogRef<AddEmployeeComponent>,
+     private toastr: ToastrService, @Inject(MAT_DIALOG_DATA) public data: any
+   )  */
+
   constructor(private fb: FormBuilder, private dialog: MatDialog, private datePipe: DatePipe,
-    private service: EmployeeService, private ref: MatDialogRef<AddEmployeeComponent>,
+    private store: Store, private ref: MatDialogRef<AddEmployeeComponent>,
     private toastr: ToastrService, @Inject(MAT_DIALOG_DATA) public data: any
   ) {
 
@@ -56,8 +66,24 @@ export class AddEmployeeComponent implements OnInit {
     this.dialogeData = this.data;
     if (this.dialogeData.code > 0) {
       this.title = 'Edit Employee';
-      this.isEdit=true;
-      this.service.getEmployeeById(this.dialogeData.code).subscribe(item => {
+      this.isEdit = true;
+
+      this.store.dispatch(getEmployee({ empId: this.dialogeData.code }));
+      this.store.select(selectEmployee).subscribe(item => {
+        let datas = item;
+        if (datas != null) {
+          const dateOfJoining = new Date(datas.dateOfJoining);
+          this.form.setValue({
+            id: datas.id,
+            name: datas.name,
+            dateOfJoining: dateOfJoining,
+            salary: datas.salary,
+            role: datas.role
+          })
+        }
+      })
+
+      /* this.service.getEmployeeById(this.dialogeData.code).subscribe(item => {
         let datas = item;
         if (datas != null) {
           const dateOfJoining = new Date(datas.dateOfJoining);
@@ -69,7 +95,8 @@ export class AddEmployeeComponent implements OnInit {
             role: datas.role
           })
         }
-      })
+      }) */
+
     }
   }
 
@@ -84,14 +111,14 @@ export class AddEmployeeComponent implements OnInit {
         id: this.form.value.id,
         name: this.form.value.name,
         // dateOfJoining: this.form.value.dateOfJoining, 
-        dateOfJoining: formattedDateOfJoining?.toString()!, 
+        dateOfJoining: formattedDateOfJoining?.toString()!,
         role: this.form.value.role,
         salary: this.form.value.salary
       }
 
-      if(this.isEdit){
+      if (this.isEdit) {
 
-        this.service.updateEmployee(formData).subscribe({
+        /* this.service.updateEmployee(formData).subscribe({
           next: (response) => {
             this.toastr.success('Your Details Add successfully', 'Updated');
             console.log('Employee saved successfully', response);
@@ -101,11 +128,13 @@ export class AddEmployeeComponent implements OnInit {
             console.error('Error saving employee', err);
           }
   
-        });
+        }); */
 
-      }else{
+        this.store.dispatch(updateEmployee({ data: formData }));
+        this.close();
+      } else {
 
-        this.service.saveEmployee(formData).subscribe({
+        /* this.service.saveEmployee(formData).subscribe({
           next: (response) => {
             this.toastr.success('Your Details Add successfully', 'Created');
             console.log('Employee saved successfully', response);
@@ -115,7 +144,11 @@ export class AddEmployeeComponent implements OnInit {
             console.error('Error saving employee', err);
           }
   
-        });
+        }); */
+
+        this.store.dispatch(addEmployee({ data: formData }));
+        this.close();
+
       }
     }
     else {
@@ -124,7 +157,7 @@ export class AddEmployeeComponent implements OnInit {
     }
   }
 
- 
+
 
   close() {
     this.ref.close();

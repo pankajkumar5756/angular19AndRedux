@@ -16,17 +16,17 @@
     },
     {
       "id": "3",
-      "name": "sanam re",
-      "dateOfJoining": "06-Mar-2019",
-      "role": "Admin",
-      "salary": "4520000"
+      "name": "Lav singh",
+      "dateOfJoining": "01-Jan-2025",
+      "role": "Software Tester",
+      "salary": "520899"
     },
     {
       "id": "4",
-      "name": "Rekha ",
-      "dateOfJoining": "09-Oct-2024",
-      "role": "Team Lead",
-      "salary": "2560000"
+      "name": "ravi singh",
+      "dateOfJoining": "03-Jan-2025",
+      "role": "Software Developer",
+      "salary": "2333333"
     }
   ]
 }

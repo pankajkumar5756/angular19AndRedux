@@ -8,13 +8,16 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Employee } from '../../model/employee';
 import { Subscription } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { deleteEmployee, loadEmployee } from '../../store/Employee.Action';
+import { getEmpList } from '../../store/Employee.Selector';
 
 
 
 
 @Component({
   selector: 'app-list-employee',
-  providers:[DatePipe],
+  providers: [DatePipe],
   imports: [MatCardModule, MatButtonModule, MatDialogModule, MatTableModule],
   templateUrl: './list-employee.component.html',
   styleUrl: './list-employee.component.css'
@@ -26,7 +29,9 @@ export class ListEmployeeComponent implements OnInit, OnDestroy {
   empList: Employee[] = [];
   subscription = new Subscription();
 
-  constructor(private dialog: MatDialog, private service: EmployeeService, private datePipe: DatePipe,) { }
+  // constructor(private dialog: MatDialog, private service: EmployeeService, private datePipe: DatePipe,) { }
+
+  constructor(private dialog: MatDialog, private datePipe: DatePipe, private store: Store) { }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -37,15 +42,24 @@ export class ListEmployeeComponent implements OnInit, OnDestroy {
   }
 
   getAllEmployeeDetails() {
-    let sub = this.service.getAllEmployee().subscribe(item => {
+    /*  let sub = this.service.getAllEmployee().subscribe(item => {
+       this.empList = item;
+       this.dataSource = new MatTableDataSource(this.empList);
+     });
+     this.subscription.add(sub); */
+
+    // get data use with redux
+
+    this.store.dispatch(loadEmployee())
+    this.store.select(getEmpList).subscribe(item => {
       this.empList = item;
       this.dataSource = new MatTableDataSource(this.empList);
-    });
-    this.subscription.add(sub);
+    })
+
   }
 
   addEmployee() {
-   this.openPopup(0);
+    this.openPopup(0);
   }
 
   editEmployee(empId: number) {
@@ -54,20 +68,25 @@ export class ListEmployeeComponent implements OnInit, OnDestroy {
 
   deleteEmployee(empId: number) {
     if (confirm('Are you sure ?')) {
-      let sub = this.service.deleteEmployee(empId).subscribe(item => {
+     /*  let sub = this.service.deleteEmployee(empId).subscribe(item => {
         this.getAllEmployeeDetails();
       });
-      this.subscription.add(sub);
+      this.subscription.add(sub); */
+
+
+      this.store.dispatch(deleteEmployee({ empId: empId }))
     }
+
+
   }
 
-  openPopup(empId:number){
+  openPopup(empId: number) {
     this.dialog.open(AddEmployeeComponent, {
       width: '50%',
       exitAnimationDuration: '1000ms',
       enterAnimationDuration: '1000ms',
-      data:{
-        'code':empId
+      data: {
+        'code': empId
       }
     }).afterClosed().subscribe(items => {
       this.getAllEmployeeDetails();
